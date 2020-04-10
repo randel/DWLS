@@ -162,7 +162,7 @@ solveSVR<-function(S,B){
 
 #perform DE analysis using Seurat
 DEAnalysis<-function(scdata,id,path){
-  exprObj<-CreateSeuratObject(raw.data=as.data.frame(scdata), project = "DE")
+  exprObj<-CreateSeuratObject(counts=as.data.frame(scdata), project = "DE")
   exprObj2<-SetIdent(exprObj,ident.use=as.vector(id))
   print("Calculating differentially expressed genes:")
   for (i in unique(id)){
