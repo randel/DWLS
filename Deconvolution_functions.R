@@ -317,7 +317,7 @@ DEAnalysisMAST<-function(scdata,id,path){
       vbeta.1 <- subset(vbeta.fa,Number.of.Cells==1)
       # .3 MAST 
       head(colData(vbeta.1))
-      zlm.output <- zlm.SingleCellAssay(~ Population, vbeta.1, method='bayesglm', ebayes=TRUE)
+      zlm.output <- zlm(~ Population, vbeta.1, method='bayesglm', ebayes=TRUE)
       show(zlm.output)
       coefAndCI <- summary(zlm.output, logFC=TRUE)
       zlm.lr <- lrTest(zlm.output, 'Population')
