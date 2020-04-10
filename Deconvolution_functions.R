@@ -167,7 +167,7 @@ DEAnalysis<-function(scdata,id,path){
   print("Calculating differentially expressed genes:")
   for (i in unique(id)){
     de_group <- FindMarkers(object=exprObj2, ident.1 = i, ident.2 = NULL, 
-                             only.pos = TRUE, test.use = "bimod")
+                             only.pos = TRUE, test.use = "bimod", min.cells.group = 1)
     save(de_group,file=paste(path,"/de_",i,".RData",sep=""))
   }
 }
