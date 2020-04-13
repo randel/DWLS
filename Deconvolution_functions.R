@@ -165,22 +165,27 @@ DEAnalysis<-function(scdata,id,path){
   exprObj<-CreateSeuratObject(counts=as.data.frame(scdata), project = "DE")
   exprObj2<-SetIdent(exprObj, value=as.vector(id))
   print("Calculating differentially expressed genes:")
+  de_group_ls = vector('list', length(unique(id)))
+  names(de_group_ls) = unique(id)
   for (i in unique(id)){
     de_group <- FindMarkers(object=exprObj2, ident.1 = i, ident.2 = NULL, 
-                             only.pos = TRUE, test.use = "bimod", min.cells.group = 1)
-    save(de_group,file=paste(path,"/de_",i,".RData",sep=""))
+                            only.pos = TRUE, test.use = "bimod", min.cells.group = 1)
+    #save(de_group,file=paste(path,"/de_",i,".RData",sep=""))
+    de_group_ls[[i]] = de_group
   }
+  return(de_group_ls)
 }
 
 #build signature matrix using genes identified by DEAnalysis()
 buildSignatureMatrixUsingSeurat<-function(scdata,id,path,diff.cutoff=0.5,pval.cutoff=0.01){
   
   #perform differential expression analysis
-  DEAnalysis(scdata,id,path)
+  de_group_ls = DEAnalysis(scdata,id,path)
   
   numberofGenes<-c()
   for (i in unique(id)){
-    load(file=paste(path,"/de_",i,".RData",sep=""))
+    #load(file=paste(path,"/de_",i,".RData",sep=""))
+    de_group = de_group_ls[[i]]
     DEGenes<-rownames(de_group)[intersect(which(de_group$p_val_adj<pval.cutoff),which(de_group$avg_logFC>diff.cutoff))]
     nonMir = grep("MIR|Mir", DEGenes, invert = T)
     assign(paste("cluster_lrTest.table.",i,sep=""),de_group[which(rownames(de_group)%in%DEGenes[nonMir]),])
